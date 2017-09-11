@@ -22,7 +22,7 @@ static const uchar FF_COMPRESS = 3;  // 已压缩的文件
 //
 #define BREAK_IF(_COND_) if (_COND_) break;
 //
-#define FE_FOREACH(_VAR_, _VEC_) FileEntry* _VAR_ = NULL; \
-for (uint i = 0; i < _VEC_.size(), i<_VEC_.size() ? _VAR_ = &_VEC_[i] : _VAR_ = NULL; i++)
+#define FE_FOREACH(_VAR_, _T_) FileEntry* _VAR_ = NULL; \
+for (std::set<FileEntry>::iterator it = _T_.begin(); it != _T_.end() ? _VAR_ = (FileEntry*)&(*it) : _VAR_ = NULL; it++)
 
 #endif // !MACROS_H

@@ -10,7 +10,7 @@
 #ifndef IASSETS_OPERATOR_H
 #define IASSETS_OPERATOR_H
 #include "Macros.h"
-#include <vector>
+#include <set>
 #pragma pack(1)
 // 资源包头部信息
 typedef struct tagPackHead
@@ -26,14 +26,18 @@ typedef struct tagFileEntry
     uint nNameHash;         // 文件名哈希值
     uint nFileSize;             // 文件大小
     uchar ucFlag;               // 文件标志
+	bool operator < (const tagFileEntry &_Target) const
+	{
+		return _Target.nFileSize > nFileSize;
+	}
 } FileEntry;
 #pragma pack()
 class IAssetsOperator
 {
 public:
-    virtual bool OpenAssetsPackFile(const char* pszFileName) = 0;
-    virtual void ReadPackHead(PackHead& packHead) = 0;
-    virtual void ReadFileEntry(std::vector<FileEntry>& vecFileEntry) = 0;
+    virtual bool OpenAssetsPackFile(const char*) = 0;
+    virtual void ReadPackHead(PackHead&) = 0;
+    virtual void ReadFileEntry(std::set<FileEntry>&) = 0;
     virtual uint Read(uchar* pBuffer, uint nOffset, uint nLen) = 0;
     virtual uint Write(const uchar* pBuffer, uint nOffset, uint nLen) = 0;
     virtual void Close() = 0;

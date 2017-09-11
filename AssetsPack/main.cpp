@@ -44,6 +44,8 @@ void TestReadFile()
     delete pAssetsPack;
 }
 
+
+
 int main(int argc, char* argv[])
 {
     TestAddFile();

@@ -12,7 +12,7 @@ CAssetsPack::CAssetsPack(IAssetsOperator* pAssetsOperator)
 {
     m_packHead.nFileAmount = 0;
     m_packHead.nFileEntryOffset = sizeof(PackHead);
-    m_vecFileEntry.clear();
+    m_setFileEntry.clear();
 }
 
 
@@ -34,9 +34,9 @@ bool CAssetsPack::LoadPackFile(const char* pszAssetsPackFile)
         return false;
     }
 
-    m_vecFileEntry.clear();
+    m_setFileEntry.clear();
     m_pAssetsOperator->ReadPackHead(m_packHead);
-    m_pAssetsOperator->ReadFileEntry(m_vecFileEntry);
+    m_pAssetsOperator->ReadFileEntry(m_setFileEntry);
 
     m_bLoaded = true;
 
@@ -47,11 +47,11 @@ IFile* CAssetsPack::OpenFile(const char* pszFileName)
 {
     uint nNameHash = XXHASH32(pszFileName);
 
-    FE_FOREACH(pEntry, m_vecFileEntry)
+    FE_FOREACH(pEntry, m_setFileEntry)
     {
         if(pEntry->ucFlag != FF_DELETE && pEntry->nNameHash == nNameHash)
         {
-            IFile* file = new CAssetsFile(m_pAssetsOperator, pEntry->nOffset, pEntry->nFileSize);
+            IFile* file = new(std::nothrow) CAssetsFile(m_pAssetsOperator, pEntry->nOffset, pEntry->nFileSize);
             return file;
         }
     }
@@ -63,7 +63,7 @@ bool CAssetsPack::IsFileExist(const char* pszFileName)
 {
     uint nNameHash = XXHASH32(pszFileName);
 
-    FE_FOREACH(pEntry, m_vecFileEntry)
+    FE_FOREACH(pEntry, m_setFileEntry)
     {
         if(pEntry->ucFlag != FF_DELETE && pEntry->nNameHash == nNameHash)
         {
@@ -78,7 +78,7 @@ bool CAssetsPack::DelFile(const char* pszFileName)
 {
     uint nNameHash = XXHASH32(pszFileName);
 
-    FE_FOREACH(pEntry, m_vecFileEntry)
+    FE_FOREACH(pEntry, m_setFileEntry)
     {
         if(pEntry->ucFlag != FF_DELETE && pEntry->nNameHash == nNameHash)
         {
@@ -117,7 +117,7 @@ bool CAssetsPack::AddFile(const char* pszFileName, const uchar* pBuffer, uint nF
         // 文件偏移放到末尾
         newEntry.nOffset = m_packHead.nFileEntryOffset;
         m_packHead.nFileEntryOffset += nFileSize;
-        m_vecFileEntry.push_back(newEntry);
+        m_setFileEntry.insert(newEntry);
         m_packHead.nFileAmount++;
     }
 
@@ -128,7 +128,7 @@ bool CAssetsPack::AddFile(const char* pszFileName, const uchar* pBuffer, uint nF
 // 获取适合大小的已删除的文件位置信息
 FileEntry* CAssetsPack::GetDirtyEntry(uint nFileSize)
 {
-    FE_FOREACH(pEntry, m_vecFileEntry)
+    FE_FOREACH(pEntry, m_setFileEntry)
     {
         if(pEntry->ucFlag == FF_DELETE && pEntry->nFileSize >= nFileSize)
         {
@@ -152,7 +152,7 @@ void CAssetsPack::SavePack()
     // 写入文件列表信息
     uint nEntryOffset = m_packHead.nFileEntryOffset;
     uint nEntrySize = sizeof(FileEntry);
-    FE_FOREACH(pEntry, m_vecFileEntry)
+    FE_FOREACH(pEntry, m_setFileEntry)
     {
         m_pAssetsOperator->Write((const uchar*)pEntry, nEntryOffset, nEntrySize);
         nEntryOffset += nEntrySize;

@@ -11,7 +11,7 @@
 #define ASSETS_OPERATOR_H
 #include "IAssetsOperator.h"
 #include "Macros.h"
-#include <vector>
+#include <set>
 class CAssetsOperator : public IAssetsOperator
 {
 public:
@@ -24,7 +24,7 @@ public:
 
 	virtual void ReadPackHead(PackHead& packHead) override;
 
-	virtual void ReadFileEntry(std::vector<FileEntry>& vecFileEntry) override;
+	virtual void ReadFileEntry(std::set<FileEntry>& setFileEntry) override;
 
 	virtual uint Read(uchar* pBuffer, uint nOffset, uint nLen) override;
 

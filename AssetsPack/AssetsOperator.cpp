@@ -71,7 +71,7 @@ void CAssetsOperator::ReadPackHead(PackHead& packHead)
     }
 }
 
-void CAssetsOperator::ReadFileEntry(std::vector<FileEntry>& vecFileEntry)
+void CAssetsOperator::ReadFileEntry(std::set<FileEntry>& setFileEntry)
 {
     if(!m_pFile)
     {
@@ -92,7 +92,7 @@ void CAssetsOperator::ReadFileEntry(std::vector<FileEntry>& vecFileEntry)
 
             if(nReaded == nEntrySize)
             {
-                vecFileEntry.push_back(entry);
+				setFileEntry.insert(entry);
             }
 
             nEntryOffset += nEntrySize;
@@ -100,9 +100,9 @@ void CAssetsOperator::ReadFileEntry(std::vector<FileEntry>& vecFileEntry)
     }
 
     // 读取的文件入口信息和文件头记录的文件数量不一致,错误了
-    if(vecFileEntry.size() != m_packHead.nFileAmount)
+	if (setFileEntry.size() != m_packHead.nFileAmount)
     {
-        vecFileEntry.clear();
+		setFileEntry.clear();
     }
 }
 
