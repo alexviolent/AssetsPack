@@ -26,7 +26,7 @@ uint CAssetsFile::Read(uchar* pBuffer)
 
 uchar* CAssetsFile::GetBuffer()
 {
-    uchar* pBuffer = new uchar[m_nFileSize];
+    uchar* pBuffer = new(std::nothrow) uchar[m_nFileSize];
 
     if(pBuffer)
     {

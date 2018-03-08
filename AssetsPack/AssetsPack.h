@@ -11,7 +11,7 @@
 #define ASSETS_PACK_H
 
 #include "Macros.h"
-#include <vector>
+#include <set>
 #include "IAssetsOperator.h"
 
 class IFile;
@@ -45,7 +45,7 @@ private:
     bool m_bLoaded; // 是否已经加载资源包文件了
     IAssetsOperator* m_pAssetsOperator;
     PackHead m_packHead; // 资源包头部信息
-    std::vector<FileEntry> m_vecFileEntry; // 所有文件入口列表
+    std::set<FileEntry> m_setFileEntry; // 所有文件入口列表
 };
 
 
