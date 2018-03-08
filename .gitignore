@@ -1,3 +1,4 @@
 *.sdf
 AssetsPack/Debug/
+AssetsPack/Release/
 ipch/
